@@ -5,16 +5,20 @@ import Link from "next/link";
 import Form from "next/form";
 import { TrolleyIcon } from "@sanity/icons";
 import { PackageIcon } from "lucide-react";
+import useBasketStore from "@/store";
 export default function Header() {
   const { user } = useUser();
+  const itemCount = useBasketStore((state) =>
+    state.items.reduce((acc, item) => acc + item.quantity, 0)
+  );
   const createClerkPasskey = async () => {
-    try{
-        const response = await user?.createPasskey()
-        console.log(response)
-    }catch(e){
-        console.error("Error:",JSON.stringify(e,null,2))
+    try {
+      const response = await user?.createPasskey();
+      console.log(response);
+    } catch (e) {
+      console.error("Error:", JSON.stringify(e, null, 2));
     }
-  }
+  };
   return (
     <header className="flex flex-wrap justify-between items-center px-4 py-2">
       <div className="flex w-full flex-wrap items-center justify-between">
@@ -41,11 +45,14 @@ export default function Header() {
             className="flex-1 relative flex justify-center sm:justify-start sm:flex-none items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             <TrolleyIcon className="w-6 h-6" />
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white size-5 flex items-center justify-center text-xs font-bold rounded-full">
+              {itemCount}
+            </span>
             <span>My Basket</span>
           </Link>
           <ClerkLoaded>
             {user && (
-                <Link
+              <Link
                 href="/orders"
                 className="flex-1 relative flex justify-center sm:justify-start sm:flex-none items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
@@ -57,20 +64,22 @@ export default function Header() {
           <ClerkLoaded>
             {user ? (
               <div className="flex items-center space-x-2">
-                <UserButton/>
+                <UserButton />
                 <div className="hidden sm:block text-xs">
-                    <p className="text-gray-400">Welcome Back</p>
-                    <p className="font-bold">{user.fullName}!</p>
+                  <p className="text-gray-400">Welcome Back</p>
+                  <p className="font-bold">{user.fullName}!</p>
                 </div>
               </div>
             ) : (
               <SignInButton mode="modal" />
             )}
             {user?.passkeys.length === 0 && (
-                <button onClick={createClerkPasskey}
-                className="bg-white hover:bg-blue-700 hover:text-white animate-pulse text-blue-500 font-bold py-2 px-4 rounded border-blue-300 border">
-                    Create passkey
-                    </button>
+              <button
+                onClick={createClerkPasskey}
+                className="bg-white hover:bg-blue-700 hover:text-white animate-pulse text-blue-500 font-bold py-2 px-4 rounded border-blue-300 border"
+              >
+                Create passkey
+              </button>
             )}
           </ClerkLoaded>
         </div>

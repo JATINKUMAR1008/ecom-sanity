@@ -1,6 +1,4 @@
 import { BasketIcon } from "@sanity/icons";
-import { Currency } from "lucide-react";
-import { title } from "process";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const orderType = defineType({
